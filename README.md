@@ -1,3 +1,8 @@
+### IMPORTANT \*\*READ FIRST\*\*
+This plugin has been amended (hackily) to work specifically with the 1859 phonegap build and the Parse SDK. In it's current state it is not suitable for re-use in other builds as it contains hard-coded clientKey and applicationId for the Parse SDK.
+
+---
+
 # Cordova Push Notifications Plugin for Android, iOS 8+, WP8 and Amazon Fire OS
 
 ---
@@ -307,7 +312,7 @@ To be called as soon as the device becomes ready.
 ```js
 $("#app-status-ul").append('<li>registering ' + device.platform + '</li>');
 if ( device.platform == 'android' || device.platform == 'Android' || device.platform == "amazon-fireos" ){
-    
+
     pushNotification.register(
     successHandler,
     errorHandler,
@@ -405,8 +410,8 @@ function onNotification(e) {
 		if ( e.foreground )
 		{
 			$("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
-			
-			// on Android soundname is outside the payload. 
+
+			// on Android soundname is outside the payload.
 			// On Amazon FireOS all custom attributes are contained within payload
 			var soundfile = e.soundname || e.payload.sound;
 			// if the notification contains a soundname, play it.

@@ -6,76 +6,76 @@
     version="2.2.1">
 
   <name>PushPlugin</name>
-	<author>Bob Easterday</author>
+    <author>Bob Easterday</author>
 
-	<description>
-		This plugin allows your application to receive push notifications on Android, iOS and WP8 devices.
+    <description>
+        This plugin allows your application to receive push notifications on Android, iOS and WP8 devices.
     Android uses Google Cloud Messaging.
     iOS uses Apple APNS Notifications.
     WP8 uses Microsoft MPNS Notifications.
-	</description>
+    </description>
 
-	<license>MIT</license>
+    <license>MIT</license>
 
-	<js-module src="www/PushNotification.js" name="PushNotification">
+    <js-module src="www/PushNotification.js" name="PushNotification">
         <clobbers target="PushNotification" />
-	</js-module>
+    </js-module>
 
-	<engines>
-		<engine name="cordova" version=">=3.0.0" />
-	</engines>
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
 
-	<!-- android -->
-	<platform name="android">
+    <!-- android -->
+    <platform name="android">
 
-		<config-file target="res/xml/config.xml" parent="/*">
-			<feature name="PushPlugin" >
-				<param name="android-package" value="com.plugin.gcm.PushPlugin"/>
-			</feature>
-		</config-file>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="PushPlugin" >
+                <param name="android-package" value="com.plugin.gcm.PushPlugin"/>
+            </feature>
+        </config-file>
 
-		<config-file target="AndroidManifest.xml" parent="/manifest">
-			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-			<uses-permission android:name="android.permission.GET_ACCOUNTS" />
-			<uses-permission android:name="android.permission.WAKE_LOCK" />
-			<uses-permission android:name="android.permission.VIBRATE"/>
-			<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-			<permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-			<uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-		</config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="android.permission.VIBRATE"/>
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+        </config-file>
 
-		<config-file target="AndroidManifest.xml" parent="/manifest/application">
-			<activity android:name="com.plugin.gcm.PushHandlerActivity" android:exported="true"/>
-			<receiver android:name="com.plugin.gcm.CordovaGCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND" >
-				<intent-filter>
-					<action android:name="com.google.android.c2dm.intent.RECEIVE" />
-					<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-					<category android:name="$PACKAGE_NAME" />
-				</intent-filter>
-			</receiver>
-			<service android:name="com.plugin.gcm.GCMIntentService" />
-		</config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:name="com.plugin.gcm.PushHandlerActivity" android:exported="true"/>
+            <receiver android:name="com.plugin.gcm.CordovaGCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND" >
+                <intent-filter>
+                    <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                    <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                    <category android:name="$PACKAGE_NAME" />
+                </intent-filter>
+            </receiver>
+            <service android:name="com.plugin.gcm.GCMIntentService" />
+        </config-file>
 
-		<source-file src="src/android/libs/gcm.jar" target-dir="libs/" />
-		<source-file src="src/android/com/plugin/gcm/CordovaGCMBroadcastReceiver.java" target-dir="src/com/plugin/gcm/" />
-		<source-file src="src/android/com/plugin/gcm/GCMIntentService.java" target-dir="src/com/plugin/gcm/" />
-		<source-file src="src/android/com/plugin/gcm/PushHandlerActivity.java" target-dir="src/com/plugin/gcm/" />
-		<source-file src="src/android/com/plugin/gcm/PushPlugin.java" target-dir="src/com/plugin/gcm/" />
-		<source-file src="src/android/com/plugin/android-support-v13.jar" target-dir="libs/" />
+        <source-file src="src/android/libs/gcm.jar" target-dir="libs/" />
+        <source-file src="src/android/com/plugin/gcm/CordovaGCMBroadcastReceiver.java" target-dir="src/com/plugin/gcm/" />
+        <source-file src="src/android/com/plugin/gcm/GCMIntentService.java" target-dir="src/com/plugin/gcm/" />
+        <source-file src="src/android/com/plugin/gcm/PushHandlerActivity.java" target-dir="src/com/plugin/gcm/" />
+        <source-file src="src/android/com/plugin/gcm/PushPlugin.java" target-dir="src/com/plugin/gcm/" />
+        <source-file src="src/android/com/plugin/android-support-v13.jar" target-dir="libs/" />
 
-	</platform>
+    </platform>
 
     <!-- amazon-fireos -->
-	<platform name="amazon-fireos">
+    <platform name="amazon-fireos">
 
-		<config-file target="res/xml/config.xml" parent="/*">
-			<feature name="PushPlugin" >
-				<param name="android-package" value="com.amazon.cordova.plugin.PushPlugin"/>
-			</feature>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="PushPlugin" >
+                <param name="android-package" value="com.amazon.cordova.plugin.PushPlugin"/>
+            </feature>
             <preference name="showmessageinnotification" value="true" />
             <preference name="defaultnotificationmessage" value="You have a new message." />
-		</config-file>
-        
+        </config-file>
+
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <!-- This permission ensures that no other application can intercept your ADM messages. "[YOUR PACKAGE NAME]" is your package name as defined in your <manifest> tag. -->
             <permission android:name="$PACKAGE_NAME.permission.RECEIVE_ADM_MESSAGE" android:protectionLevel="signature" />
@@ -84,14 +84,14 @@
             <uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
             <!-- ADM uses WAKE_LOCK to keep the processor from sleeping when a message is received. -->
             <uses-permission android:name="android.permission.WAKE_LOCK" />
-		</config-file>
+        </config-file>
 
-		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <!-- You must explicitly enable ADM and declare whether your app cannot work without ADM (android:required="true") or can work without ADM (android:required="false").
             If you specify android:required="false", your app must degrade gracefully if ADM
             is unavailable. -->
             <amazon:enable-feature android:name="com.amazon.device.messaging" android:required="true"/>
-			<service android:exported="false" android:name="com.amazon.cordova.plugin.ADMMessageHandler" />
+            <service android:exported="false" android:name="com.amazon.cordova.plugin.ADMMessageHandler" />
             <activity android:exported="true" android:name="com.amazon.cordova.plugin.ADMHandlerActivity" />
             <receiver android:name="com.amazon.cordova.plugin.ADMMessageHandler$Receiver" android:permission="com.amazon.device.messaging.permission.SEND">
                 <intent-filter>
@@ -99,31 +99,76 @@
                     <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
                     <category android:name="$PACKAGE_NAME" />
                 </intent-filter>
-            </receiver>		
+            </receiver>
         </config-file>
-        
+
         <source-file src="src/amazon/PushPlugin.java" target-dir="src/com/amazon/cordova/plugin" />
         <source-file src="src/amazon/ADMMessageHandler.java" target-dir="src/com/amazon/cordova/plugin" />
         <source-file src="src/amazon/ADMHandlerActivity.java" target-dir="src/com/amazon/cordova/plugin" />
-       		
-	</platform>
 
-	<!-- ios -->
-	<platform name="ios">
+    </platform>
 
-		<config-file target="config.xml" parent="/*">
-			<feature name="PushPlugin">
-				<param name="ios-package" value="PushPlugin"/>
-			</feature>
-		</config-file>
+    <!-- ios -->
+    <platform name="ios">
 
-		<source-file src="src/ios/AppDelegate+notification.m" />
-		<source-file src="src/ios/PushPlugin.m" />
+        <config-file target="config.xml" parent="/*">
+            <feature name="PushPlugin">
+                <param name="ios-package" value="PushPlugin"/>
+            </feature>
+        </config-file>
 
-		<header-file src="src/ios/AppDelegate+notification.h" />
-		<header-file src="src/ios/PushPlugin.h" />
+        <source-file src="src/ios/AppDelegate+notification.m" />
+        <source-file src="src/ios/PushPlugin.m" />
+        <source-file src="src/ios/JCNotificationBanner.m" />
+        <source-file src="src/ios/JCNotificationBannerPresenter.m" />
+        <source-file src="src/ios/JCNotificationBannerPresenterIOS7Style.m" />
+        <source-file src="src/ios/JCNotificationBannerPresenterIOSStyle.m" />
+        <source-file src="src/ios/JCNotificationBannerPresenterSmokeStyle.m" />
+        <source-file src="src/ios/JCNotificationBannerView.m" />
+        <source-file src="src/ios/JCNotificationBannerViewController.m" />
+        <source-file src="src/ios/JCNotificationBannerViewIOS7Style.m" />
+        <source-file src="src/ios/JCNotificationBannerViewIOSStyle.m" />
+        <source-file src="src/ios/JCNotificationBannerWindow.m" />
+        <source-file src="src/ios/JCNotificationCenter.m" />
 
-	</platform>
+        <header-file src="src/ios/AppDelegate+notification.h" />
+        <header-file src="src/ios/PushPlugin.h" />
+        <header-file src="src/ios/JCNotificationBanner.h" />
+        <header-file src="src/ios/JCNotificationBannerPresenter.h" />
+        <header-file src="src/ios/JCNotificationBannerPresenter_Private.h" />
+        <header-file src="src/ios/JCNotificationBannerPresenterIOS7Style.h" />
+        <header-file src="src/ios/JCNotificationBannerPresenterIOSStyle.h" />
+        <header-file src="src/ios/JCNotificationBannerPresenterSmokeStyle.h" />
+        <header-file src="src/ios/JCNotificationBannerView.h" />
+        <header-file src="src/ios/JCNotificationBannerViewController.h" />
+        <header-file src="src/ios/JCNotificationBannerViewIOS7Style.h" />
+        <header-file src="src/ios/JCNotificationBannerViewIOSStyle.h" />
+        <header-file src="src/ios/JCNotificationBannerWindow.h" />
+        <header-file src="src/ios/JCNotificationCenter.h" />
+
+        <framework src="AdSupport.framework" />
+        <framework src="Social.framework" />
+        <framework src="Accounts.framework" />
+        <framework src="AudioToolbox.framework" />
+        <framework src="CFNetwork.framework" />
+        <framework src="CoreGraphics.framework" />
+        <framework src="CoreLocation.framework" />
+        <framework src="MobileCoreServices.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="Security.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="UIKit.framework" />
+        <framework src="libsqlite3.dylib" />
+        <framework src="libz.1.1.3.dylib" />
+        <framework src="libstdc++.6.dylib" />
+
+        <framework src="src/ios/frameworks/Bolts.framework" custom="true" />
+        <framework src="src/ios/frameworks/Parse.framework" custom="true" />
+        <framework src="src/ios/frameworks/ParseCrashReporting.framework" custom="true" />
+        <framework src="src/ios/frameworks/ParseFacebookUtils.framework" custom="true" />
+        <framework src="src/ios/frameworks/ParseUI.framework" custom="true" />
+
+    </platform>
 
   <!-- wp8 -->
   <platform name="wp8">

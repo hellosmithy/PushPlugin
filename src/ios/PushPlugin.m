@@ -24,6 +24,14 @@
  */
 
 #import "PushPlugin.h"
+#import <Parse/Parse.h>
+
+#import "JCNotificationBannerPresenter.h"
+
+#import "JCNotificationCenter.h"
+#import "JCNotificationBannerPresenterSmokeStyle.h"
+#import "JCNotificationBannerPresenterIOSStyle.h"
+#import "JCNotificationBannerPresenterIOS7Style.h"
 
 @implementation PushPlugin
 
@@ -33,11 +41,12 @@
 @synthesize callbackId;
 @synthesize notificationCallbackId;
 @synthesize callback;
+@synthesize callbackTap;
 
 
 - (void)unregister:(CDVInvokedUrlCommand*)command;
 {
-	self.callbackId = command.callbackId;
+    self.callbackId = command.callbackId;
 
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
     [self successWithMessage:@"unregistered"];
@@ -45,7 +54,7 @@
 
 - (void)register:(CDVInvokedUrlCommand*)command;
 {
-	self.callbackId = command.callbackId;
+    self.callbackId = command.callbackId;
 
     NSMutableDictionary* options = [command.arguments objectAtIndex:0];
 
@@ -53,7 +62,7 @@
     id badgeArg = [options objectForKey:@"badge"];
     id soundArg = [options objectForKey:@"sound"];
     id alertArg = [options objectForKey:@"alert"];
-    
+
     if ([badgeArg isKindOfClass:[NSString class]])
     {
         if ([badgeArg isEqualToString:@"true"])
@@ -61,7 +70,7 @@
     }
     else if ([badgeArg boolValue])
         notificationTypes |= UIUserNotificationTypeBadge;
-    
+
     if ([soundArg isKindOfClass:[NSString class]])
     {
         if ([soundArg isEqualToString:@"true"])
@@ -69,7 +78,7 @@
     }
     else if ([soundArg boolValue])
         notificationTypes |= UIUserNotificationTypeSound;
-    
+
     if ([alertArg isKindOfClass:[NSString class]])
     {
         if ([alertArg isEqualToString:@"true"])
@@ -77,8 +86,9 @@
     }
     else if ([alertArg boolValue])
         notificationTypes |= UIUserNotificationTypeAlert;
-    
+
     self.callback = [options objectForKey:@"ecb"];
+    self.callbackTap = [options objectForKey:@"ecb_tap"];
 
     if (notificationTypes == UIUserNotificationTypeNone)
         NSLog(@"PushPlugin.register: Push notification type is set to none");
@@ -87,9 +97,9 @@
 
     [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil]];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
-	
-	if (notificationMessage)			// if there is a pending startup notification
-		[self notificationReceived];	// go ahead and process it
+
+    if (notificationMessage)            // if there is a pending startup notification
+        [self notificationReceived];    // go ahead and process it
 }
 
 /*
@@ -107,12 +117,12 @@
                         stringByReplacingOccurrencesOfString:@">" withString:@""]
                        stringByReplacingOccurrencesOfString: @" " withString: @""];
     [results setValue:token forKey:@"deviceToken"];
-    
+
     #if !TARGET_IPHONE_SIMULATOR
         // Get Bundle Info for Remote Registration (handy if you have more than one app)
         [results setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"] forKey:@"appName"];
         [results setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"] forKey:@"appVersion"];
-        
+
         // Check what Notifications the user has turned on.  We registered for all three, but they may have manually disabled some or all of them.
         UIUserNotificationSettings *currentNotifSettings = [UIApplication sharedApplication].currentUserNotificationSettings;
         UIUserNotificationType rntypes = currentNotifSettings.types;
@@ -149,13 +159,13 @@
         [results setValue:dev.model forKey:@"deviceModel"];
         [results setValue:dev.systemVersion forKey:@"deviceSystemVersion"];
 
-		[self successWithMessage:[NSString stringWithFormat:@"%@", token]];
+        [self successWithMessage:[NSString stringWithFormat:@"%@", token]];
     #endif
 }
 
 - (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-	[self failWithMessage:@"" withError:error];
+    [self failWithMessage:@"" withError:error];
 }
 
 - (void)notificationReceived {
@@ -172,17 +182,37 @@
             [jsonStr appendFormat:@"foreground:\"%d\"", 1];
             isInline = NO;
         }
-		else
+        else
             [jsonStr appendFormat:@"foreground:\"%d\"", 0];
-        
+
         [jsonStr appendString:@"}"];
 
         NSLog(@"Msg: %@", jsonStr);
 
         NSString * jsCallBack = [NSString stringWithFormat:@"%@(%@);", self.callback, jsonStr];
         [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-        
+
+        NSString* message = notificationMessage[@"aps"][@"alert"];
+
+        [JCNotificationCenter sharedCenter].presenter = [JCNotificationBannerPresenterIOS7Style new];
+
+        [JCNotificationCenter
+         enqueueNotificationWithTitle:nil
+         message:message
+         tapHandler:^{
+//             UIAlertView* alert = [[UIAlertView alloc]
+//                                   initWithTitle:@"Tapped notification"
+//                                   message:@"Perform some custom action on notification tap event..."
+//                                   delegate:nil
+//                                   cancelButtonTitle:@"OK"
+//                                   otherButtonTitles:nil];
+//             [alert show];
+            NSString * jsCallBackTap = [NSString stringWithFormat:@"%@(%@);", self.callbackTap, jsonStr];
+            [self.webView stringByEvaluatingJavaScriptFromString:jsCallBackTap];
+         }];
+
         self.notificationMessage = nil;
+
     }
 }
 
@@ -191,11 +221,11 @@
 {
     NSArray         *keys = [inDictionary allKeys];
     NSString        *key;
-    
+
     for (key in keys)
     {
         id thisObject = [inDictionary objectForKey:key];
-    
+
         if ([thisObject isKindOfClass:[NSDictionary class]])
             [self parseDictionary:thisObject intoJSON:jsonString];
         else if ([thisObject isKindOfClass:[NSString class]])
@@ -235,7 +265,7 @@
 {
     NSString        *errorMessage = (error) ? [NSString stringWithFormat:@"%@ - %@", message, [error localizedDescription]] : message;
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorMessage];
-    
+
     [self.commandDelegate sendPluginResult:commandResult callbackId:self.callbackId];
 }
 

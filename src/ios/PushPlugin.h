@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -33,13 +33,15 @@
     BOOL    isInline;
     NSString *notificationCallbackId;
     NSString *callback;
-    
+    NSString *callbackTap;
+
     BOOL ready;
 }
 
 @property (nonatomic, copy) NSString *callbackId;
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *callback;
+@property (nonatomic, copy) NSString *callbackTap;
 
 @property (nonatomic, strong) NSDictionary *notificationMessage;
 @property BOOL                          isInline;
